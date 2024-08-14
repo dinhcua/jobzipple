@@ -14,4 +14,9 @@ export class CreateCompanyDto {
     message: 'Address is required',
   })
   address: string;
+
+  @IsNotEmpty({
+    message: 'Location is required',
+  })
+  location: string;
 }
