@@ -14,6 +14,7 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 import { User } from '../decorators/request-user.decorator';
 import { IUser } from '../users/users.interface';
 import { TCompanyQuery } from '../types/query';
+import { Public } from '../decorators/public.decorator';
 
 @Controller('companies')
 export class CompaniesController {
@@ -25,13 +26,15 @@ export class CompaniesController {
   }
 
   @Get()
+  @Public()
   findAll(@Query() query: TCompanyQuery) {
     return this.companiesService.findAll(query);
   }
 
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string) {
-    return this.companiesService.findOne(+id);
+    return this.companiesService.findOne(id);
   }
 
   @Patch(':id')

@@ -21,3 +21,5 @@ export interface TUserQuery extends TQuery {
   email: string;
   role: string;
 }
+
+export interface TJobQuery extends TQuery {}
