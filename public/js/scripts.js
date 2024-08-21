@@ -27,3 +27,21 @@ const tri = new Tritangle(2, 2);
 tri.base = 3;
 
 console.log(tri.area());
+
+/**
+ * @param {Function[]} functions
+ * @return {Function}
+ */
+var compose = function (functions) {
+  return function (x) {
+    let fn = functions[0];
+    x = fn(x);
+
+    return x;
+  };
+};
+
+const fn = compose([(x) => x + 1, (x) => 2 * x]);
+const a = fn(4); // 9
+
+console.log(a);

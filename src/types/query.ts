@@ -23,3 +23,7 @@ export interface TUserQuery extends TQuery {
 }
 
 export interface TJobQuery extends TQuery {}
+
+export interface TResumeQuery extends TQuery {
+  populate?: string;
+}
