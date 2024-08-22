@@ -11,16 +11,19 @@ import { LOGIN_SUCCESS } from '../constants/response.constants';
 import { Public } from '../decorators/public.decorator';
 import { ResponseMessage } from '../decorators/responce-message.decorator';
 import { AuthService } from './auth.service';
-// import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RegisterUserDto } from '../users/dto/register-user.dto';
 import { IUser } from '../users/users.interface';
 import { User } from '../decorators/request-user.decorator';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Request, Response } from 'express';
+import { RolesService } from '../roles/roles.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly rolesService: RolesService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Public()
   @Post('register')
@@ -37,8 +40,12 @@ export class AuthController {
   }
 
   @Get('account')
-  getAccount(@User() user: IUser) {
-    return user;
+  async getAccount(@User() user: IUser) {
+    console.log(user.role._id);
+
+    const temp = await this.rolesService.findOne(user.role._id);
+    user.permissions = temp.permissions;
+    return { user };
   }
 
   @Public()

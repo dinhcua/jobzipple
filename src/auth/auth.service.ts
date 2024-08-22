@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { IUser } from '../users/users.interface';
 import { RegisterUserDto } from '../users/dto/register-user.dto';
 import { Response } from 'express';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class AuthService {
@@ -12,14 +13,23 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private roleService: RolesService,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneByUserName(username);
     if (user && this.usersService.isValidPassword(pass, user.password)) {
-      delete user.password;
+      const userRole = user.role as unknown as { _id: string; name: string };
+      const temp = await this.roleService.findOne(userRole._id);
 
-      return user;
+      const objUser = {
+        ...user.toObject(),
+        permissions: temp?.permissions ?? [],
+      };
+
+      delete objUser.password;
+
+      return objUser;
     }
     return null;
   }

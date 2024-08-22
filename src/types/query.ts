@@ -4,6 +4,8 @@ export type TQuery = {
   pageSize: number;
   current: number;
   sort: string;
+  populate?: string;
+  fields?: string;
 };
 
 export interface TCompanyQuery extends TQuery {
@@ -24,6 +26,15 @@ export interface TUserQuery extends TQuery {
 
 export interface TJobQuery extends TQuery {}
 
-export interface TResumeQuery extends TQuery {
-  populate?: string;
+export interface TResumeQuery extends TQuery {}
+
+export interface TPermissionQuery extends TQuery {
+  name: string;
+  apiPath: string;
+  method: string;
+  module: string;
+}
+
+export interface TRoleQuery extends TQuery {
+  name: string;
 }

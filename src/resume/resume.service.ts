@@ -56,6 +56,7 @@ export class ResumeService {
       pageSize = DEFAULT_PAGE_LIMIT,
       current = DEFAULT_PAGE,
       populate,
+      fields,
       sort,
     } = query;
 
@@ -88,14 +89,26 @@ export class ResumeService {
     const totalItems = await this.resumeModel.find(filter).countDocuments();
     const totalPages = Math.ceil(totalItems / +pageSize);
 
+    const populateFields = populate
+      ? populate.split(',').map((p: string) => {
+          const select = [];
+
+          fields.split(',').map((a) => {
+            const [path, sel] = a.split('.');
+            if (path === p) {
+              select.push(sel);
+            }
+          });
+
+          return { path: p, select };
+        })
+      : [];
+
     const result = await this.resumeModel
       .find(filter)
       .skip(offset)
       .limit(defaultLimit)
-      .populate([
-        { path: 'companyId', select: ['name', 'logo', '_id'] },
-        { path: 'jobId', select: ['title', 'description', '_id'] },
-      ])
+      .populate(populateFields)
       .sort(softBy)
       .exec();
 

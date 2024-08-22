@@ -11,6 +11,7 @@ import { FilesModule } from './files/files.module';
 import { ResumeModule } from './resume/resume.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
+import { DatabasesModule } from './databases/databases.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { RolesModule } from './roles/roles.module';
     ResumeModule,
     PermissionsModule,
     RolesModule,
+    DatabasesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
