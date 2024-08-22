@@ -38,3 +38,7 @@ export interface TPermissionQuery extends TQuery {
 export interface TRoleQuery extends TQuery {
   name: string;
 }
+
+export interface TSubscriberQuery extends TQuery {
+  email: string;
+}
