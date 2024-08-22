@@ -1,3 +1,4 @@
+import { ADMIN_ROLE, USER_ROLE } from './../databases/constans';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -10,11 +11,13 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { NotFoundError } from 'rxjs';
 import { TUserQuery } from '../types/query';
 import { DEFAULT_PAGE, DEFAULT_PAGE_LIMIT } from '../constants';
+import { Role, RoleDocument } from '../roles/schemas/role.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+    @InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>,
   ) {}
 
   hashPassword(plainPassword: string) {
@@ -62,13 +65,16 @@ export class UsersService {
     }
     const { email, age, gender, name, address, password } = registerUserDto;
     const hashedPassword = this.hashPassword(password);
+
+    const userRole = await this.roleModel.findOne({ role: USER_ROLE });
+
     const newUser = await this.userModel.create({
       email,
       age,
       gender,
       name,
       address,
-      role: 'USER',
+      role: userRole._id,
       password: hashedPassword,
     });
     const result = newUser.toObject();
@@ -148,8 +154,11 @@ export class UsersService {
   }
 
   async findOneByUserName(username: string) {
-    const user = await this.userModel.findOne({ email: username });
-    return user.toObject();
+    const user = await this.userModel.findOne({ email: username }).populate({
+      path: 'role',
+      select: { name: 1 },
+    });
+    return user;
   }
 
   isValidPassword(password: string, hash: string) {
@@ -169,7 +178,16 @@ export class UsersService {
     );
   }
 
-  remove(id: string, user: IUser) {
+  async remove(id: string, user: IUser) {
+    const userWantRemove = (await this.userModel.findById(id).populate({
+      path: 'role',
+      select: { name: 1 },
+    })) as any;
+
+    if (userWantRemove?.role?.name === ADMIN_ROLE) {
+      throw new BadRequestException('Cannot delete admin role');
+    }
+
     return this.userModel.updateOne(
       { _id: id },
       {

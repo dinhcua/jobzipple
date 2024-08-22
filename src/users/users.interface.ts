@@ -3,5 +3,15 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
-  role: string;
+  role: {
+    _id: string;
+    name: string;
+  };
+  permissions?: {
+    _id: string;
+    name: string;
+    apiPath: string;
+    method: string;
+    module: string;
+  }[];
 }

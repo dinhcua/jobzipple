@@ -8,6 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { CompaniesModule } from './companies/companies.module';
 import { JobsModule } from './jobs/jobs.module';
 import { FilesModule } from './files/files.module';
+import { ResumeModule } from './resume/resume.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { RolesModule } from './roles/roles.module';
+import { DatabasesModule } from './databases/databases.module';
 
 @Module({
   imports: [
@@ -35,6 +39,10 @@ import { FilesModule } from './files/files.module';
     CompaniesModule,
     JobsModule,
     FilesModule,
+    ResumeModule,
+    PermissionsModule,
+    RolesModule,
+    DatabasesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

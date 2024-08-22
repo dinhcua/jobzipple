@@ -45,7 +45,6 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto, user);
   }
 
-  @Public()
   @Delete(':id')
   remove(@Param('id') id: string, @User() user: IUser) {
     return this.usersService.remove(id, user);
