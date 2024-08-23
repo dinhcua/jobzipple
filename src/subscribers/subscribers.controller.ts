@@ -15,6 +15,7 @@ import { User } from '../decorators/request-user.decorator';
 import { IUser } from '../users/users.interface';
 import { Public } from '../decorators/public.decorator';
 import { TSubscriberQuery } from '../types/query';
+// import { SkipPermission } from '../decorators/skip-permission.decorator';
 
 @Controller('subscribers')
 export class SubscribersController {
@@ -34,19 +35,17 @@ export class SubscribersController {
     return this.subscribersService.findAll(query);
   }
 
-  @Public()
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subscribersService.findOne(id);
+  @Post('skills')
+  findOne(@User() user: IUser) {
+    return this.subscribersService.findOne(user);
   }
 
-  @Patch(':id')
+  @Patch()
   update(
-    @Param('id') id: string,
     @Body() updateSubscriberDto: UpdateSubscriberDto,
     @User() user: IUser,
   ) {
-    return this.subscribersService.update(id, updateSubscriberDto, user);
+    return this.subscribersService.update(updateSubscriberDto, user);
   }
 
   @Delete(':id')

@@ -103,28 +103,25 @@ export class SubscribersService {
       },
     };
   }
-  findOne(id: string) {
-    return this.subscriberModel.findById(id);
+
+  findOne(user: IUser) {
+    return this.subscriberModel.findOne({
+      email: user.email,
+    });
   }
 
-  update(id: string, updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
-    const isExistEmail = this.subscriberModel.exists({
-      _id: { $ne: id },
-      email: updateSubscriberDto.email,
-    });
-
-    if (isExistEmail) {
-      throw new BadRequestException('Email already exists');
-    }
-
+  update(updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
     return this.subscriberModel.updateOne(
-      { _id: id },
+      { email: updateSubscriberDto.email },
       {
         ...updateSubscriberDto,
         updatedBy: {
           _id: user._id,
           email: user.email,
         },
+      },
+      {
+        upsert: true,
       },
     );
   }

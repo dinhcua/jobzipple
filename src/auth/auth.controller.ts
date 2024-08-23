@@ -17,7 +17,10 @@ import { User } from '../decorators/request-user.decorator';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { Request, Response } from 'express';
 import { RolesService } from '../roles/roles.service';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { UserLoginDto } from '../users/dto/create-user.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -31,8 +34,10 @@ export class AuthController {
     return this.authService.register(registerUserDto);
   }
 
+  // @UseGuards(ThrottlerGuard)
   @UseGuards(LocalAuthGuard)
   @ResponseMessage(LOGIN_SUCCESS)
+  @ApiBody({ type: UserLoginDto })
   @Public()
   @Post('login')
   handleLogin(@Req() req, @Res({ passthrough: true }) response: Response) {
@@ -41,8 +46,6 @@ export class AuthController {
 
   @Get('account')
   async getAccount(@User() user: IUser) {
-    console.log(user.role._id);
-
     const temp = await this.rolesService.findOne(user.role._id);
     user.permissions = temp.permissions;
     return { user };
